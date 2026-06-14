@@ -13,9 +13,12 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
                     animation: {
                         'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'blob': 'blob 10s infinite',
                         'bounce-fast': 'bounce 1s infinite',
                         'bounce-med': 'bounce 1.2s infinite',
                         'bounce-slow': 'bounce 0.8s infinite',
@@ -24,18 +27,14 @@
                         fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(30px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         }
                     }
                 }
             }
         }
     </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 
     <!-- React and ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -44,13 +43,12 @@
     <!-- Babel for in-browser JSX compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-slate-50 antialiased text-slate-900">
+<body class="bg-slate-50 antialiased text-slate-900 scroll-smooth">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- ICONS (Inline SVG Components for Standalone HTML) ---
         const IconPlay = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>;
         const IconPause = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>;
         const IconCalendar = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
@@ -69,53 +67,55 @@
 
         const IMGBB_API_KEY = '9ce6742772f2469096b3d99e811000b9';
         const RADIO_STREAM_URL = 'https://stream.zeno.fm/4zq8f5ym0mwtv'; 
-        // COLE AQUI A URL GERADA PELO GOOGLE APPS SCRIPT:
-        const GOOGLE_API_URL = 'https://script.google.com/macros/s/SUA_URL_AQUI/exec'; 
+        
+        // URL da sua planilha já integrada!
+        const GOOGLE_API_URL = 'https://script.google.com/macros/s/AKfycby3miRV5OfT-ZPHy74kaThGX3hub2c9BwzUSEycxk1lgt58FCxtyKC4XozsSRvVfdf_CA/exec'; 
 
         function App() {
-            // --- STATES ---
+            // States
             const [events, setEvents] = useState([]);
             const [isLoadingEvents, setIsLoadingEvents] = useState(true);
             const [activeSlide, setActiveSlide] = useState(0);
             const [selectedEvent, setSelectedEvent] = useState(null);
             
-            // Radio States
             const [isPlaying, setIsPlaying] = useState(false);
             const [isRadioDocked, setIsRadioDocked] = useState(false);
             const audioRef = useRef(null);
 
-            // Admin States
             const [isAdminAuth, setIsAdminAuth] = useState(false);
             const [showAdminLogin, setShowAdminLogin] = useState(false);
             const [adminPassInput, setAdminPassInput] = useState('');
             const [showAdminPanel, setShowAdminPanel] = useState(false);
 
-            // Form State
             const [isUploading, setIsUploading] = useState(false);
             const [newEvent, setNewEvent] = useState({ title: '', date: '', time: '', location: '', description: '', imageUrl: '' });
 
-            // Custom Notification & Confirmation Modal States
             const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
             const [confirmDialog, setConfirmDialog] = useState({ visible: false, id: null, message: '' });
 
             const showToast = (message, type = 'success') => {
                 setToast({ visible: true, message, type });
-                setTimeout(() => setToast({ visible: false, message: '', type: 'success' }), 4000);
+                setTimeout(() => setToast({ visible: false, message: '', type: 'success' }), 5000);
             };
 
             const fetchEvents = async () => {
                 setIsLoadingEvents(true);
                 try {
-                    if (GOOGLE_API_URL.includes('https://script.google.com/macros/s/AKfycby3miRV5OfT-ZPHy74kaThGX3hub2c9BwzUSEycxk1lgt58FCxtyKC4XozsSRvVfdf_CA/exec')) {
-                        setIsLoadingEvents(false);
-                        return;
+                    const response = await fetch(GOOGLE_API_URL, { redirect: "follow" });
+                    const text = await response.text();
+                    
+                    // Tratamento caso a permissão do Google Apps Script esteja errada
+                    if (text.includes('<!DOCTYPE html>') || text.includes('<html')) {
+                        throw new Error('Permissão Negada. Verifique se o Apps Script foi publicado para "Qualquer Pessoa".');
                     }
-                    const response = await fetch(GOOGLE_API_URL);
-                    const data = await response.json();
+                    
+                    const data = JSON.parse(text);
+                    if (data.error) throw new Error(data.error);
+                    
                     setEvents(data);
                 } catch (error) {
                     console.error("Erro ao carregar eventos:", error);
-                    showToast("Falha ao carregar eventos.", "error");
+                    showToast("Erro na agenda: " + error.message, "error");
                 } finally {
                     setIsLoadingEvents(false);
                 }
@@ -126,11 +126,8 @@
                 
                 const checkHashRoute = () => {
                     if (window.location.hash === '#/adm') {
-                        if (!isAdminAuth) {
-                            setShowAdminLogin(true);
-                        } else {
-                            setShowAdminPanel(true);
-                        }
+                        if (!isAdminAuth) setShowAdminLogin(true);
+                        else setShowAdminPanel(true);
                     }
                 };
                 
@@ -139,20 +136,16 @@
                 return () => window.removeEventListener('hashchange', checkHashRoute);
             }, [isAdminAuth]);
 
-            // Auto-play do Carrossel
             useEffect(() => {
                 if (events.length === 0 || showAdminPanel || selectedEvent) return;
-                
                 const interval = setInterval(() => {
                     setActiveSlide((prev) => (prev === events.length - 1 ? 0 : prev + 1));
                 }, 5000);
-                
                 return () => clearInterval(interval);
             }, [events.length, showAdminPanel, selectedEvent]);
 
             const togglePlay = () => {
                 if (!audioRef.current) return;
-                
                 if (isPlaying) {
                     audioRef.current.pause();
                     setIsPlaying(false);
@@ -166,7 +159,6 @@
             const generateGoogleCalendarUrl = (event) => {
                 const startDate = new Date(`${event.date}T${event.time}`);
                 const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
-                
                 const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d\d\d/g, "");
 
                 const url = new URL('https://calendar.google.com/calendar/render');
@@ -175,7 +167,6 @@
                 url.searchParams.append('dates', `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`);
                 url.searchParams.append('details', event.description);
                 url.searchParams.append('location', event.location);
-                
                 return url.toString();
             };
 
@@ -185,8 +176,6 @@
                     setIsAdminAuth(true);
                     setShowAdminLogin(false);
                     setShowAdminPanel(true);
-                } else {
-                    showToast("Digite a senha de administrador.", "error");
                 }
             };
 
@@ -205,13 +194,9 @@
                     });
                     const data = await response.json();
                     
-                    if (data.success) {
-                        setNewEvent({ ...newEvent, imageUrl: data.data.url });
-                    } else {
-                        showToast("Erro ao fazer upload da imagem.", "error");
-                    }
+                    if (data.success) setNewEvent({ ...newEvent, imageUrl: data.data.url });
+                    else showToast("Erro ao fazer upload da imagem.", "error");
                 } catch (error) {
-                    console.error(error);
                     showToast("Erro de conexão ao fazer upload.", "error");
                 } finally {
                     setIsUploading(false);
@@ -220,14 +205,9 @@
 
             const handleSaveEvent = async (e) => {
                 e.preventDefault();
-                if (GOOGLE_API_URL.includes('SUA_URL_AQUI')) {
-                    showToast("Configure a URL do Google Apps Script no código!", "error");
-                    return;
-                }
-
                 const eventToSave = { ...newEvent, id: Date.now() };
                 const updatedEvents = [...events, eventToSave];
-                setEvents(updatedEvents); // UI otimista
+                setEvents(updatedEvents); 
                 
                 try {
                     const response = await fetch(GOOGLE_API_URL, {
@@ -235,21 +215,20 @@
                         body: JSON.stringify({ action: 'add', password: adminPassInput, event: eventToSave })
                     });
                     
-                    const result = await response.json();
+                    const text = await response.text();
+                    const result = JSON.parse(text);
+                    
                     if (result.error) {
-                        showToast("Erro do servidor: " + result.error, "error");
+                        showToast("Erro: " + result.error, "error");
                         fetchEvents(); 
                     } else {
                         setNewEvent({ title: '', date: '', time: '', location: '', description: '', imageUrl: '' });
                         showToast("Evento publicado com sucesso!");
                     }
                 } catch (error) {
-                    showToast("Erro ao salvar no banco de dados.", "error");
+                    showToast("Erro ao salvar no servidor.", "error");
+                    fetchEvents();
                 }
-            };
-
-            const triggerDelete = (id) => {
-                setConfirmDialog({ visible: true, id: id, message: "Tem certeza que deseja excluir este evento?" });
             };
 
             const confirmDeleteAction = async () => {
@@ -258,10 +237,7 @@
 
                 const updatedEvents = events.filter(ev => ev.id !== id);
                 setEvents(updatedEvents);
-                
-                if (activeSlide >= updatedEvents.length && updatedEvents.length > 0) {
-                    setActiveSlide(updatedEvents.length - 1);
-                }
+                if (activeSlide >= updatedEvents.length && updatedEvents.length > 0) setActiveSlide(updatedEvents.length - 1);
 
                 try {
                     const response = await fetch(GOOGLE_API_URL, {
@@ -270,31 +246,28 @@
                     });
                     const result = await response.json();
                     if (result.error) {
-                        showToast("Erro do servidor: " + result.error, "error");
+                        showToast("Erro: " + result.error, "error");
                         fetchEvents(); 
-                    } else {
-                        showToast("Evento excluído.");
-                    }
+                    } else showToast("Evento excluído.");
                 } catch (error) {
-                    showToast("Erro ao excluir no banco de dados.", "error");
+                    showToast("Erro ao excluir no servidor.", "error");
+                    fetchEvents();
                 }
             };
 
             return (
-                <div className="min-h-screen bg-slate-50 pb-32 overflow-x-hidden">
+                <div className="min-h-screen bg-slate-50 overflow-x-hidden">
                     <audio ref={audioRef} src={RADIO_STREAM_URL} preload="none" />
 
-                    {/* --- NOTIFICATIONS (Custom Toast) --- */}
                     {toast.visible && (
                         <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] animate-fade-in-up">
-                            <div className={`px-6 py-3 rounded-full shadow-lg backdrop-blur-md text-white font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500/90 border border-red-400' : 'bg-emerald-500/90 border border-emerald-400'}`}>
+                            <div className={`px-6 py-3 rounded-full shadow-lg backdrop-blur-md text-white font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500/90 border border-red-400' : 'bg-slate-900 border border-slate-700'}`}>
                                 {toast.type === 'error' ? <IconInfo size={18} /> : <IconPlay size={18} />}
                                 {toast.message}
                             </div>
                         </div>
                     )}
 
-                    {/* --- CONFIRMATION DIALOG (Custom Modal) --- */}
                     {confirmDialog.visible && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
                             <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-fade-in-up">
@@ -308,65 +281,54 @@
                         </div>
                     )}
 
-                    {/* --- NAVBAR --- */}
-                    <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
+                    {/* --- HEADER CLEAN --- */}
+                    <nav className="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
                         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-amber-400 font-bold text-xl">
-                                    EA
-                                </div>
-                                <span className="font-extrabold text-xl tracking-tight text-slate-900">
+                            <div className="flex items-center">
+                                <span className="font-serif text-2xl md:text-3xl tracking-tight font-extrabold text-slate-900">
                                     Eterna Aliança
                                 </span>
                             </div>
-                            <div className="hidden md:flex items-center gap-8 font-medium text-sm">
-                                <a href="#home" className="hover:text-amber-500 transition-colors">Início</a>
-                                <a href="#eventos" className="hover:text-amber-500 transition-colors">Eventos</a>
-                                <a href="#radio" className="hover:text-amber-500 transition-colors">Rádio</a>
-                                <a href="#local" className="hover:text-amber-500 transition-colors">Localização</a>
-                                <a href="#/adm" className="hover:text-amber-500 transition-colors flex items-center gap-1 opacity-50"><IconLock size={14}/> Admin</a>
+                            <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
+                                <a href="#home" className="hover:text-amber-600 transition-colors">Início</a>
+                                <a href="#eventos" className="hover:text-amber-600 transition-colors">Agenda</a>
+                                <a href="#radio" className="hover:text-amber-600 transition-colors">Rádio</a>
+                                <a href="#local" className="hover:text-amber-600 transition-colors">Local</a>
                             </div>
                         </div>
                     </nav>
 
-                    {/* --- HERO SECTION (Aurora/Apple Style) --- */}
-                    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900 pt-20">
-                        <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-blue-600/30 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
-                        <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-amber-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob" style={{animationDelay: '2s'}}></div>
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40rem] h-[30rem] bg-indigo-600/20 rounded-full mix-blend-screen filter blur-[120px] animate-blob" style={{animationDelay: '4s'}}></div>
-
-                        <div className="relative z-10 px-6 max-w-5xl mx-auto text-center flex flex-col items-center">
-                            <div className="inline-flex items-center gap-2 mb-8 px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl text-amber-300 text-sm font-semibold tracking-widest uppercase shadow-2xl">
-                                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                                Bem-vindo à sua nova casa
-                            </div>
-                            
-                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white mb-8 leading-[1.05]">
-                                Aliança <br className="hidden md:block"/>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-lg">
-                                    Eterna.
-                                </span>
-                            </h1>
-                            
-                            <p className="text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-                                Um lugar de propósito, adoração e comunhão genuína. Conecte-se com Deus e com nossa família.
-                            </p>
-                            
-                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                                <a href="#eventos" className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full font-bold text-lg transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2">
-                                    <IconCalendar size={20} />
-                                    Nossa Agenda
-                                </a>
-                                <a href="#radio" onClick={(e) => { e.preventDefault(); togglePlay(); }} className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-full font-bold text-lg transition-all backdrop-blur-md flex items-center justify-center gap-2">
-                                    {isPlaying ? <IconPause size={20} /> : <IconPlay size={20} />}
-                                    Ouvir Rádio
-                                </a>
-                            </div>
+                    {/* --- HERO SECTION CLEAN & ELEGANTE --- */}
+                    <section id="home" className="relative pt-32 pb-20 px-6 max-w-7xl mx-auto text-center flex flex-col items-center justify-center min-h-[80vh]">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] md:w-[40rem] md:h-[40rem] bg-amber-100 rounded-full blur-[100px] -z-10 opacity-60"></div>
+                        
+                        <div className="inline-flex items-center gap-2 mb-8 px-5 py-2 rounded-full border border-slate-200 bg-white/50 backdrop-blur-sm text-slate-500 text-sm font-semibold tracking-widest uppercase shadow-sm">
+                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                            Bem-vindo à sua nova casa
+                        </div>
+                        
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1]">
+                            Uma igreja de <br className="hidden md:block"/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-400">
+                                propósito eterno.
+                            </span>
+                        </h1>
+                        
+                        <p className="text-lg md:text-2xl text-slate-500 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+                            Junte-se a nós para celebrar, aprender e viver a verdadeira comunhão na presença de Deus.
+                        </p>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                            <a href="#eventos" className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
+                                <IconCalendar size={20} /> Nossa Agenda
+                            </a>
+                            <a href="#radio" onClick={(e) => { e.preventDefault(); togglePlay(); }} className="px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-900 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                                {isPlaying ? <IconPause size={20} /> : <IconPlay size={20} />} Rádio ao Vivo
+                            </a>
                         </div>
                     </section>
 
                     <section id="eventos" className="relative py-24 min-h-[80vh] flex items-center overflow-hidden bg-slate-900">
-                        {/* Dynamic Ambient Background */}
                         {events.length > 0 && (
                             <div className="absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out">
                                 <img src={events[activeSlide]?.imageUrl} alt="background" className="w-full h-full object-cover opacity-30 transform scale-125 blur-3xl" />
@@ -392,27 +354,23 @@
                             {isLoadingEvents ? (
                                 <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-12 text-center text-slate-400 border border-white/10 flex flex-col items-center">
                                     <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                    Buscando agenda no servidor...
+                                    Sincronizando agenda com o servidor...
                                 </div>
                             ) : events.length === 0 ? (
                                 <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-12 text-center text-slate-400 border border-white/10">
-                                    Nenhum evento programado no momento.
+                                    Nenhum evento programado no momento. Acesse o painel para adicionar.
                                 </div>
                             ) : (
                                 <div className="relative">
                                     {events.map((event, index) => (
                                         <div key={event.id} className={`${index === activeSlide ? 'block animate-fade-in-up' : 'hidden'} w-full`}>
                                             <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
-                                                
-                                                {/* BANNER VERTICAL PROTEGIDO */}
                                                 <div className="w-full sm:w-2/3 md:w-5/12 flex-shrink-0" style={{perspective: '1000px'}}>
-                                                    <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 group transform transition-transform duration-700 hover:rotate-y-2 hover:scale-[1.02]">
+                                                    <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 group transform transition-transform duration-700 hover:scale-[1.02]">
                                                         <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110 ease-out" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                     </div>
                                                 </div>
 
-                                                {/* INFOS */}
                                                 <div className="w-full md:w-7/12 text-white flex flex-col justify-center">
                                                     <div className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-amber-500/20 self-start backdrop-blur-md">
                                                         <IconCalendar size={16} />
@@ -451,78 +409,44 @@
                         </div>
                     </section>
 
-                    {!isRadioDocked && (
-                        <section id="radio" className="py-20 bg-slate-900 text-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-                            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                                <h2 className="text-4xl font-bold mb-4">Rádio Eterna Aliança</h2>
-                                <p className="text-slate-400 mb-10">Ouça louvores e a palavra de Deus 24 horas por dia, onde quer que você esteja.</p>
-                                
-                                <button onClick={togglePlay} className="group relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-white text-slate-900 hover:bg-amber-400 transition-all duration-300 hover:scale-110 shadow-2xl">
-                                    {isPlaying ? <IconPause size={40} className="ml-1" /> : <IconPlay size={40} className="ml-2" />}
-                                    {isPlaying && <div className="absolute -inset-4 border border-amber-400/50 rounded-full animate-ping" />}
-                                </button>
-                                <p className="mt-6 text-sm font-medium tracking-widest uppercase text-amber-500">
-                                    {isPlaying ? 'Ao Vivo Agora' : 'Aperte o Play'}
-                                </p>
-                            </div>
-                        </section>
-                    )}
-
-                    {/* --- LOCALIZAÇÃO --- */}
                     <section id="local" className="py-20 bg-slate-50">
                         <div className="max-w-7xl mx-auto px-6">
-                            <div className="bg-white rounded-[2rem] shadow-xl p-8 md:p-16 flex flex-col md:flex-row items-center gap-12">
+                            <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-8 md:p-16 flex flex-col md:flex-row items-center gap-12">
                                 <div className="flex-1 text-center md:text-left">
-                                    <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
+                                    <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
                                         <IconMapPin size={32} />
                                     </div>
                                     <h2 className="text-3xl font-bold mb-4">Venha nos Visitar</h2>
-                                    <p className="text-slate-500 text-lg mb-8">
-                                        Av. Principal, 1234 - Centro<br/>
-                                        Cidade - Estado, CEP 00000-000
-                                    </p>
-                                    <a href="https://maps.google.com/?q=Igreja+Eterna+Alianca" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-8 rounded-full transition-colors">
-                                        Como Chegar
-                                    </a>
-                                </div>
-                                <div className="flex-1 w-full h-64 md:h-96 rounded-3xl overflow-hidden bg-slate-200 relative">
-                                    <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400">
-                                        <IconMapPin size={48} className="mb-2 opacity-50" />
-                                        <span>Mapa Interativo</span>
-                                    </div>
+                                    <p className="text-slate-500 text-lg mb-8">Av. Principal, 1234 - Centro<br/>Cidade - Estado</p>
+                                    <a href="https://maps.google.com/?q=Igreja+Eterna+Alianca" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-8 rounded-full transition-colors">Como Chegar</a>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    <footer className="bg-slate-900 pt-16 pb-8 text-slate-400">
+                    <footer className="bg-white border-t border-slate-200 pt-16 pb-8 text-slate-500">
                         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="flex items-center gap-2 text-white opacity-80 hover:opacity-100 transition-opacity">
-                                <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-sm">EA</div>
-                                <span className="font-bold tracking-wider">ETERNA ALIANÇA</span>
-                            </div>
+                            <span className="font-serif text-xl font-bold text-slate-900">Eterna Aliança</span>
                             <div className="flex gap-4">
-                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconInstagram size={20}/></a>
-                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconFacebook size={20}/></a>
-                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconYoutube size={20}/></a>
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-100 transition-colors"><IconInstagram size={20}/></a>
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-100 transition-colors"><IconFacebook size={20}/></a>
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-100 transition-colors"><IconYoutube size={20}/></a>
                             </div>
                         </div>
-                        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs">
-                            <p>© 2026 Igreja Eterna Aliança. Todos os direitos reservados.</p>
-                            <a href="#/adm" className="mt-4 md:mt-0 flex items-center gap-1 hover:text-amber-500 transition-colors opacity-50 hover:opacity-100"><IconLock size={12}/> Admin</a>
+                        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-xs">
+                            <p>© 2026 Eterna Aliança. Todos os direitos reservados.</p>
+                            <a href="#/adm" className="mt-4 md:mt-0 flex items-center gap-1 hover:text-amber-500 transition-colors opacity-60"><IconLock size={12}/> Admin</a>
                         </div>
                     </footer>
 
-                    {/* --- FLOATING RADIO PLAYER --- */}
                     {isRadioDocked && (
                         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-8 md:w-80 z-50 animate-fade-in-up">
-                            <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-4 text-white">
-                                <button onClick={togglePlay} className="w-12 h-12 flex-shrink-0 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+                            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xl flex items-center gap-4 text-slate-900">
+                                <button onClick={togglePlay} className="w-12 h-12 flex-shrink-0 bg-slate-900 text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform">
                                     {isPlaying ? <IconPause size={20} className="ml-[1px]" /> : <IconPlay size={20} className="ml-1" />}
                                 </button>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-sm truncate">Rádio Eterna Aliança</p>
+                                    <p className="font-bold text-sm truncate">Ao Vivo</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         {isPlaying && (
                                             <span className="flex gap-[2px] h-3 items-end">
@@ -531,95 +455,73 @@
                                                 <span className="w-1 bg-amber-500 animate-bounce-slow h-4/5"></span>
                                             </span>
                                         )}
-                                        <p className="text-xs text-slate-400 truncate">{isPlaying ? 'Tocando ao vivo' : 'Pausado'}</p>
+                                        <p className="text-xs text-slate-500 truncate">{isPlaying ? 'Tocando rádio' : 'Pausado'}</p>
                                     </div>
                                 </div>
-                                <button onClick={() => { setIsRadioDocked(false); if(isPlaying) togglePlay(); }} className="text-slate-500 hover:text-white p-1">
+                                <button onClick={() => { setIsRadioDocked(false); if(isPlaying) togglePlay(); }} className="text-slate-400 hover:text-slate-600 p-1">
                                     <IconX size={16} />
                                 </button>
                             </div>
                         </div>
                     )}
 
-                    {/* --- EVENT MODAL --- */}
                     {selectedEvent && (
                         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedEvent(null)} />
                             <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden relative z-10 animate-fade-in-up shadow-2xl">
-                                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 backdrop-blur-md transition">
-                                    <IconX size={20} />
-                                </button>
+                                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 backdrop-blur-md transition"><IconX size={20} /></button>
                                 <div className="h-64 md:h-80 w-full relative">
                                     <img src={selectedEvent.imageUrl} alt={selectedEvent.title} className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
-                                    <div className="absolute bottom-6 left-6 text-white">
-                                        <h2 className="text-3xl font-bold mb-2">{selectedEvent.title}</h2>
-                                    </div>
+                                    <div className="absolute bottom-6 left-6 text-white"><h2 className="text-3xl font-bold mb-2">{selectedEvent.title}</h2></div>
                                 </div>
                                 <div className="p-8">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                         <div className="flex items-center gap-4 text-slate-600">
-                                            <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0"><IconCalendar size={24} /></div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-slate-900">Data e Hora</p>
-                                                <p>{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('pt-BR')} às {selectedEvent.time}</p>
-                                            </div>
+                                            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0"><IconCalendar size={24} /></div>
+                                            <div><p className="text-sm font-semibold text-slate-900">Data e Hora</p><p>{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('pt-BR')} às {selectedEvent.time}</p></div>
                                         </div>
                                         <div className="flex items-center gap-4 text-slate-600">
-                                            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0"><IconMapPin size={24} /></div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-slate-900">Local</p>
-                                                <p className="truncate w-40 md:w-auto" title={selectedEvent.location}>{selectedEvent.location}</p>
-                                            </div>
+                                            <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0"><IconMapPin size={24} /></div>
+                                            <div><p className="text-sm font-semibold text-slate-900">Local</p><p className="truncate w-40 md:w-auto" title={selectedEvent.location}>{selectedEvent.location}</p></div>
                                         </div>
                                     </div>
-                                    <div className="mb-8">
-                                        <h4 className="font-bold text-slate-900 mb-2">Sobre o evento</h4>
-                                        <p className="text-slate-600 leading-relaxed">{selectedEvent.description}</p>
-                                    </div>
-                                    <a href={generateGoogleCalendarUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-colors">
-                                        <IconCalendar size={20} /> Marcar no Calendário
-                                    </a>
+                                    <div className="mb-8"><h4 className="font-bold text-slate-900 mb-2">Sobre o evento</h4><p className="text-slate-600 leading-relaxed">{selectedEvent.description}</p></div>
+                                    <a href={generateGoogleCalendarUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-colors"><IconCalendar size={20} /> Marcar no Calendário</a>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* --- ADMIN LOGIN MODAL --- */}
                     {showAdminLogin && (
-                        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
-                            <form onSubmit={handleAdminLogin} className="bg-white p-8 rounded-3xl w-full max-w-sm relative animate-fade-in-up">
+                        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                            <form onSubmit={handleAdminLogin} className="bg-white p-8 rounded-3xl w-full max-w-sm relative animate-fade-in-up shadow-2xl border border-slate-100">
                                 <button type="button" onClick={() => { setShowAdminLogin(false); window.location.hash = ''; }} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900"><IconX size={20} /></button>
                                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-900"><IconLock size={24} /></div>
                                 <h3 className="text-2xl font-bold mb-2">Acesso Restrito</h3>
                                 <p className="text-slate-500 mb-6 text-sm">Área de gerenciamento do site.</p>
                                 <input type="password" placeholder="Senha" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} className="w-full p-3 rounded-xl border border-slate-200 mb-4 focus:ring-2 focus:ring-amber-500 outline-none" autoFocus />
-                                <button type="submit" className="w-full bg-amber-500 text-slate-900 font-bold py-3 rounded-xl">Entrar</button>
+                                <button type="submit" className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800">Entrar</button>
                             </form>
                         </div>
                     )}
 
-                    {/* --- ADMIN PANEL --- */}
                     {showAdminPanel && isAdminAuth && (
-                        <div className="fixed inset-0 z-[80] bg-slate-100 flex flex-col md:flex-row overflow-hidden animate-fade-in-up">
-                            <div className="w-full md:w-80 bg-slate-900 text-white p-6 flex flex-col">
+                        <div className="fixed inset-0 z-[80] bg-slate-50 flex flex-col md:flex-row overflow-hidden animate-fade-in-up">
+                            <div className="w-full md:w-80 bg-white border-r border-slate-200 text-slate-900 p-6 flex flex-col">
                                 <div className="flex justify-between items-center mb-10">
                                     <h2 className="text-xl font-bold">Painel Admin</h2>
-                                    <button onClick={() => { setShowAdminPanel(false); window.location.hash = ''; }} className="bg-white/10 p-2 rounded-lg hover:bg-white/20"><IconX size={20} /></button>
+                                    <button onClick={() => { setShowAdminPanel(false); window.location.hash = ''; }} className="bg-slate-100 p-2 rounded-lg hover:bg-slate-200"><IconX size={20} /></button>
                                 </div>
                                 <div className="flex-1 overflow-y-auto pr-2">
                                     <h3 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Eventos Atuais</h3>
                                     <div className="space-y-3">
                                         {events.map(ev => (
-                                            <div key={ev.id} className="bg-white/5 p-4 rounded-xl flex items-center justify-between group border border-white/5">
-                                                <div className="min-w-0">
-                                                    <p className="font-medium truncate">{ev.title}</p>
-                                                    <p className="text-xs text-slate-400">{new Date(ev.date + 'T12:00:00').toLocaleDateString('pt-BR')}</p>
-                                                </div>
-                                                <button onClick={() => triggerDelete(ev.id)} className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-2"><IconTrash2 size={16} /></button>
+                                            <div key={ev.id} className="bg-white p-4 rounded-xl flex items-center justify-between group border border-slate-200 shadow-sm">
+                                                <div className="min-w-0"><p className="font-medium truncate">{ev.title}</p><p className="text-xs text-slate-500">{new Date(ev.date + 'T12:00:00').toLocaleDateString('pt-BR')}</p></div>
+                                                <button onClick={() => triggerDelete(ev.id)} className="text-slate-400 hover:text-red-500 transition-colors p-2"><IconTrash2 size={16} /></button>
                                             </div>
                                         ))}
-                                        {events.length === 0 && <p className="text-sm text-slate-500">Nenhum evento cadastrado.</p>}
                                     </div>
                                 </div>
                             </div>
@@ -627,52 +529,28 @@
                                 <div className="max-w-2xl mx-auto">
                                     <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
                                         <div className="flex items-center gap-3 mb-8">
-                                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center"><IconPlus size={20} /></div>
+                                            <div className="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center"><IconPlus size={20} /></div>
                                             <h2 className="text-2xl font-bold">Adicionar Novo Evento</h2>
                                         </div>
                                         <form onSubmit={handleSaveEvent} className="space-y-6">
-                                            <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Título do Evento</label>
-                                                <input required type="text" value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
-                                            </div>
+                                            <div><label className="block text-sm font-medium text-slate-700 mb-1">Título</label><input required type="text" value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-slate-700 mb-1">Data</label>
-                                                    <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-slate-700 mb-1">Hora</label>
-                                                    <input required type="time" value={newEvent.time} onChange={e => setNewEvent({...newEvent, time: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
-                                                </div>
+                                                <div><label className="block text-sm font-medium text-slate-700 mb-1">Data</label><input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none" /></div>
+                                                <div><label className="block text-sm font-medium text-slate-700 mb-1">Hora</label><input required type="time" value={newEvent.time} onChange={e => setNewEvent({...newEvent, time: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                                             </div>
+                                            <div><label className="block text-sm font-medium text-slate-700 mb-1">Local</label><input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none" /></div>
+                                            <div><label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label><textarea required rows="3" value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none resize-none" /></div>
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Local</label>
-                                                <input required type="text" placeholder="Ex: Sede Principal" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label>
-                                                <textarea required rows="3" value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Banner Vertical (Upload Automático)</label>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Banner Vertical (Automático)</label>
                                                 <div className="flex items-center gap-4">
-                                                    <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-xl font-medium transition flex items-center gap-2">
-                                                        <IconUpload size={18} />
-                                                        {isUploading ? 'Enviando...' : 'Escolher Imagem'}
+                                                    <label className="cursor-pointer bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-4 py-3 rounded-xl font-medium transition flex items-center gap-2">
+                                                        <IconUpload size={18} /> {isUploading ? 'Enviando...' : 'Escolher Imagem'}
                                                         <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploading} />
                                                     </label>
-                                                    {newEvent.imageUrl && (
-                                                        <div className="h-16 w-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                                                            <img src={newEvent.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                                        </div>
-                                                    )}
+                                                    {newEvent.imageUrl && <div className="h-16 w-12 rounded-lg overflow-hidden border border-slate-200"><img src={newEvent.imageUrl} className="w-full h-full object-cover" /></div>}
                                                 </div>
-                                                {newEvent.imageUrl && <p className="text-xs text-green-600 mt-2 font-medium">✓ Imagem hospedada com sucesso.</p>}
                                             </div>
-                                            <hr className="border-slate-100" />
-                                            <button type="submit" disabled={!newEvent.imageUrl || isUploading} className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                                Publicar Evento
-                                            </button>
+                                            <button type="submit" disabled={!newEvent.imageUrl || isUploading} className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 disabled:opacity-50 transition">Publicar Evento</button>
                                         </form>
                                     </div>
                                 </div>
