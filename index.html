@@ -4,630 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eterna Aliança</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Google Fonts & Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-
-    <!-- Tailwind Custom Configuration (Design System) -->
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "inverse-primary": "#b4c5ff",
-                        "secondary-container": "#e0e3e5",
-                        "secondary": "#5c5f61",
-                        "surface-tint": "#0053db",
-                        "on-error": "#ffffff",
-                        "on-secondary-fixed-variant": "#444749",
-                        "on-secondary-fixed": "#191c1e",
-                        "on-tertiary-container": "#ebf1ff",
-                        "tertiary": "#00569c",
-                        "surface-variant": "#dae2fd",
-                        "surface": "#faf8ff",
-                        "surface-bright": "#faf8ff",
-                        "on-surface": "#131b2e",
-                        "on-surface-variant": "#434655",
-                        "secondary-fixed": "#e0e3e5",
-                        "inverse-surface": "#283044",
-                        "outline-variant": "#c3c6d7",
-                        "primary-container": "#2563eb",
-                        "tertiary-container": "#196fc0",
-                        "primary": "#004ac6",
-                        "on-primary-fixed": "#00174b",
-                        "on-tertiary": "#ffffff",
-                        "surface-dim": "#d2d9f4",
-                        "on-secondary-container": "#626567",
-                        "primary-fixed": "#dbe1ff",
-                        "on-secondary": "#ffffff",
-                        "surface-container-low": "#f2f3ff",
-                        "secondary-fixed-dim": "#c4c7c9",
-                        "error-container": "#ffdad6",
-                        "surface-container-high": "#e2e7ff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container": "#eaedff",
-                        "on-tertiary-fixed-variant": "#004883",
-                        "tertiary-fixed-dim": "#a4c9ff",
-                        "on-error-container": "#93000a",
-                        "inverse-on-surface": "#eef0ff",
-                        "tertiary-fixed": "#d4e3ff",
-                        "primary-fixed-dim": "#b4c5ff",
-                        "on-primary-container": "#eeefff",
-                        "error": "#ba1a1a",
-                        "on-background": "#131b2e",
-                        "surface-container-highest": "#dae2fd",
-                        "on-primary": "#ffffff",
-                        "on-primary-fixed-variant": "#003ea8",
-                        "background": "#faf8ff",
-                        "outline": "#737686",
-                        "on-tertiary-fixed": "#001c39"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "3xl": "1.5rem",
-                        "full": "9999px"
-                    },
-                    spacing: {
-                        "margin-mobile": "16px",
-                        "margin-desktop": "40px",
-                        "gutter": "24px",
-                        "unit": "8px",
-                        "container-max": "1280px"
-                    },
-                    fontFamily: {
-                        "sans": ["Inter", "sans-serif"],
-                        "display-lg": ["Inter", "sans-serif"],
-                        "headline-lg": ["Inter", "sans-serif"],
-                        "headline-xl": ["Inter", "sans-serif"],
-                        "body-xl": ["Inter", "sans-serif"],
-                        "label-sm": ["Inter", "sans-serif"],
-                        "display-lg-mobile": ["Inter", "sans-serif"],
-                        "body-md": ["Inter", "sans-serif"],
-                        "body-lg": ["Inter", "sans-serif"],
-                        "label-lg": ["Inter", "sans-serif"]
-                    },
-                    fontSize: {
-                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-                        "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-                        "body-xl": ["20px", { "lineHeight": "30px", "fontWeight": "400" }],
-                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
-                        "display-lg-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }]
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'float': 'float 4s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; min-height: 100dvh; }
-        
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* Glassmorphism Styles */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(24px) saturate(160%);
-            -webkit-backdrop-filter: blur(24px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-        }
-        .celestial-glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-        }
-        .glass-morphism-heavy {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: saturate(200%) blur(32px);
-            -webkit-backdrop-filter: saturate(200%) blur(32px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        
-        /* Gradients */
-        .hero-gradient {
-            background: linear-gradient(180deg, rgba(250, 248, 255, 0) 40%, #faf8ff 100%);
-        }
-        .ethereal-bg {
-            background: radial-gradient(circle at top right, #dbe1ff 0%, transparent 60%),
-                        radial-gradient(circle at bottom left, #eaedff 0%, transparent 60%);
-        }
-
-        /* Utilities */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-        .active-filter {
-            background-color: #004ac6;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 74, 198, 0.2);
-        }
-        
-        /* Radio Pulse */
-        @keyframes pulse-bar {
-            0% { height: 30%; }
-            100% { height: 100%; }
-        }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px) saturate(160%); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
+        .celestial-glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.8); }
+        .glass-morphism-heavy { background: rgba(255, 255, 255, 0.85); backdrop-filter: saturate(200%) blur(32px); border: 1px solid rgba(255, 255, 255, 0.4); }
     </style>
-
-    <!-- React and ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-[#faf8ff] text-on-background font-body-md min-h-screen pb-32">
+<body class="bg-[#faf8ff] text-[#131b2e] min-h-screen">
     <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-
-        // Custom Brand Icons
-        const IconInstagram = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>;
-        const IconFacebook = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>;
-        const IconYoutube = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>;
-
         const RADIO_STREAM_URL = 'https://stream.zeno.fm/4zq8f5ym0mwtv'; 
         const GOOGLE_API_URL = 'https://script.google.com/macros/s/AKfycby3miRV5OfT-ZPHy74kaThGX3hub2c9BwzUSEycxk1lgt58FCxtyKC4XozsSRvVfdf_CA/exec'; 
 
         function App() {
-            // States
             const [events, setEvents] = useState([]);
-            const [isLoadingEvents, setIsLoadingEvents] = useState(true);
             const [selectedEvent, setSelectedEvent] = useState(null);
-            
             const [isPlaying, setIsPlaying] = useState(false);
-            const [isRadioDocked, setIsRadioDocked] = useState(false); // Controls floating player visibility
+            const [isRadioDocked, setIsRadioDocked] = useState(false);
             const audioRef = useRef(null);
 
-            const [showMobileMenu, setShowMobileMenu] = useState(false);
-            const [activeFilter, setActiveFilter] = useState('Todos');
-            const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
-
-            const showToast = (message, type = 'success') => {
-                setToast({ visible: true, message, type });
-                setTimeout(() => setToast({ visible: false, message: '', type: 'success' }), 5000);
-            };
-
-            const fetchEvents = async () => {
-                setIsLoadingEvents(true);
-                try {
-                    const response = await fetch(GOOGLE_API_URL, { redirect: "follow" });
-                    const text = await response.text();
-                    
-                    if (text.includes('<!DOCTYPE html>') || text.includes('<html')) {
-                        throw new Error('Permissão Negada. Verifique se o Apps Script foi publicado para "Qualquer Pessoa".');
-                    }
-                    
-                    const data = JSON.parse(text);
-                    if (data.error) throw new Error(data.error);
-                    
-                    // Ordenar por data
-                    const sorted = data.sort((a,b) => new Date(a.date) - new Date(b.date));
-                    setEvents(sorted);
-                } catch (error) {
-                    console.error("Erro ao carregar eventos:", error);
-                    showToast("Não foi possível carregar a agenda.", "error");
-                } finally {
-                    setIsLoadingEvents(false);
-                }
-            };
-
             useEffect(() => {
-                fetchEvents();
+                fetch(GOOGLE_API_URL)
+                    .then(res => res.json())
+                    .then(data => setEvents(data.sort((a,b) => new Date(a.date) - new Date(b.date))))
+                    .catch(err => console.error("Erro na agenda:", err));
             }, []);
 
-            // Prevent scroll when mobile menu is open
-            useEffect(() => {
-                if (showMobileMenu) document.body.style.overflow = 'hidden';
-                else document.body.style.overflow = '';
-            }, [showMobileMenu]);
-
-            // Robust Play logic + Reveals docked player
             const togglePlay = () => {
                 if (!audioRef.current) return;
-                
-                if (isPlaying) {
-                    audioRef.current.pause();
-                    setIsPlaying(false);
-                } else {
+                if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
+                else { 
                     audioRef.current.load();
-                    const playPromise = audioRef.current.play();
-                    
-                    if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            setIsPlaying(true);
-                            setIsRadioDocked(true); // Player reveals on first play
-                        }).catch(error => {
-                            console.error("Erro ao reproduzir rádio:", error);
-                            setIsPlaying(false);
-                            showToast("Rádio offline ou formato não suportado.", "error");
-                        });
-                    } else {
-                        setIsPlaying(true); 
-                        setIsRadioDocked(true);
-                    }
+                    audioRef.current.play().then(() => { setIsPlaying(true); setIsRadioDocked(true); }).catch(() => alert("Erro ao tocar rádio"));
                 }
             };
 
-            const generateGoogleCalendarUrl = (event) => {
-                const startDate = new Date(`${event.date}T${event.time}`);
-                const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
-                const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d\d\d/g, "");
-
-                const url = new URL('https://calendar.google.com/calendar/render');
-                url.searchParams.append('action', 'TEMPLATE');
-                url.searchParams.append('text', event.title);
-                url.searchParams.append('dates', `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`);
-                url.searchParams.append('details', event.description);
-                url.searchParams.append('location', event.location);
-                return url.toString();
+            const generateGoogleCalendarUrl = (ev) => {
+                const start = new Date(`${ev.date}T${ev.time}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
+                const end = ev.endDate ? new Date(`${ev.endDate}T${ev.endTime || '23:59'}`).toISOString().replace(/-|:|\.\d\d\d/g, "") : start;
+                return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${start}/${end}&details=${encodeURIComponent(ev.description)}&location=${encodeURIComponent(ev.location)}`;
             };
 
             return (
-                <div className="bg-[#faf8ff] text-on-background min-h-screen">
-                    <audio 
-                        ref={audioRef} 
-                        preload="none"
-                        onError={(e) => {
-                            console.error("Audio Load Error:", e);
-                            setIsPlaying(false);
-                        }}
-                    >
-                        <source src={RADIO_STREAM_URL} />
-                    </audio>
-
-                    {/* Top Navigation Desktop & Mobile */}
-                    <nav className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-2xl border-b border-white/20 h-16 md:h-20">
-                        <div className="flex justify-between items-center px-6 md:px-margin-desktop h-full max-w-container-max mx-auto">
-                            <h1 className="font-headline-lg font-bold text-primary tracking-tight">Eterna Aliança</h1>
-                            
-                            {/* Desktop Links */}
-                            <div className="hidden md:flex items-center gap-8">
-                                <a href="#home" className="font-label-lg text-primary border-b-2 border-primary pb-1 transition-colors">Início</a>
-                                <a href="#eventos" className="font-label-lg text-on-surface-variant hover:text-primary transition-colors">Agenda</a>
-                                <a href="#local" className="font-label-lg text-on-surface-variant hover:text-primary transition-colors">Local</a>
-                                <a href="admin.html" className="font-label-lg text-on-surface-variant hover:text-primary transition-colors">Admin</a>
-                            </div>
-
-                            {/* Mobile Hamburger */}
-                            <button onClick={() => setShowMobileMenu(true)} className="md:hidden p-2 text-primary active:scale-90 transition-transform">
-                                <span className="material-symbols-outlined">menu</span>
-                            </button>
-
-                            {/* Desktop Search / Avatar */}
-                            <div className="hidden md:flex items-center gap-4">
-                                <button className="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container rounded-full transition-colors">search</button>
-                                <a href="admin.html" className="w-10 h-10 rounded-full border-2 border-white/50 shadow-sm overflow-hidden flex items-center justify-center bg-surface-container hover:bg-surface-container-high transition-colors text-primary">
-                                    <span className="material-symbols-outlined">person</span>
-                                </a>
-                            </div>
-                        </div>
+                <div className="pb-32">
+                    <audio ref={audioRef} src={RADIO_STREAM_URL} preload="none" />
+                    
+                    {/* Header */}
+                    <nav className="fixed top-0 w-full z-50 celestial-glass h-20 px-6 flex items-center justify-between">
+                        <h1 className="font-bold text-xl text-[#004ac6]">Eterna Aliança</h1>
+                        <a href="admin.html" className="text-sm font-semibold text-[#434655]">Admin</a>
                     </nav>
 
-                    {/* Mobile Menu Overlay */}
-                    <div className={`fixed inset-0 z-[60] bg-white/95 backdrop-blur-3xl transition-transform duration-300 ease-in-out md:hidden ${showMobileMenu ? 'translate-x-0' : 'translate-x-full'}`}>
-                        <div className="flex flex-col h-full p-margin-mobile">
-                            <div className="flex justify-end mb-8">
-                                <button onClick={() => setShowMobileMenu(false)} className="p-2 text-primary">
-                                    <span className="material-symbols-outlined text-3xl">close</span>
-                                </button>
-                            </div>
-                            <div className="flex flex-col space-y-8 px-4">
-                                <a href="#home" onClick={() => setShowMobileMenu(false)} className="font-display-lg-mobile text-primary font-bold border-b-2 border-primary w-fit pr-4">Home</a>
-                                <a href="#eventos" onClick={() => setShowMobileMenu(false)} className="font-display-lg-mobile text-on-surface-variant font-semibold">Events</a>
-                                <a href="#local" onClick={() => setShowMobileMenu(false)} className="font-display-lg-mobile text-on-surface-variant font-semibold">Local</a>
-                                <a href="admin.html" onClick={() => setShowMobileMenu(false)} className="font-display-lg-mobile text-on-surface-variant font-semibold">Admin</a>
-                            </div>
-                            <div className="mt-auto pb-12">
-                                <button onClick={() => {togglePlay(); setShowMobileMenu(false);}} className="w-full bg-primary text-on-primary py-4 rounded-2xl font-bold text-lg shadow-2xl shadow-primary/30 flex justify-center items-center gap-2">
-                                    <span className="material-symbols-outlined">{isPlaying ? 'pause' : 'play_arrow'}</span>
-                                    {isPlaying ? 'Pausar Rádio' : 'Tocar Rádio'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Hero Section */}
-                    <section id="home" className="relative pt-16 md:pt-20 h-[80dvh] min-h-[600px] flex flex-col items-center justify-center text-center px-6 overflow-hidden ethereal-bg">
-                        <div className="absolute inset-0 z-0">
-                            <img className="w-full h-full object-cover opacity-20 scale-105" alt="Background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTAZj4fMhd3u43GRlLa0mQjU4QWFnjtFRBNagvnU9TumP42auSyJs3Rwgvz--PfUUeu0xuKRYzKFNeFB0QRIISiWef-4--NmVCkhDaSHaOVnG4npCfQRfWdGok02jVqq0krcP7Z8Uj9QPujWyjFi7L6kjss4rBfFI4GmPf3uHKfXoHBafIuLjjcszxcrSJTY6F1b7sji5NFJKt-wwb7sj_Kh_mlO2VZeA4PmItGxw0llXqMBPBrHiCqCVbF2jzh9rf9Mfq6DwYIQPh"/>
-                            <div className="absolute inset-0 hero-gradient"></div>
-                        </div>
-                        <div className="relative z-10 space-y-8 max-w-sm md:max-w-3xl mx-auto animate-fade-in-up">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-primary-fixed/50 text-on-primary-fixed font-bold text-[10px] md:text-sm tracking-widest uppercase mb-2">UM NOVO TEMPO</span>
-                            <h1 className="font-bold text-[44px] md:text-display-lg leading-[1.1] text-on-background tracking-tight">
-                                Onde a Eternidade se <span className="text-primary italic">Encontra</span> com Você.
-                            </h1>
-                            <p className="font-body-lg md:text-body-xl text-on-surface-variant/80 max-w-xl mx-auto">
-                                Venha fazer parte de uma comunidade que busca viver a plenitude do Reino de Deus através da adoração e comunhão.
-                            </p>
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                                <a href="#eventos" className="w-full sm:w-auto bg-primary text-on-primary px-8 py-5 md:py-4 rounded-2xl font-bold text-lg shadow-xl shadow-primary/25 active:scale-95 transition-all">
-                                    Ver Agenda
-                                </a>
-                                <button onClick={togglePlay} className="w-full sm:w-auto glass-card text-on-surface px-8 py-5 md:py-4 rounded-2xl font-bold text-lg border border-white/60 active:scale-95 transition-all flex justify-center items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>{isPlaying ? 'pause_circle' : 'play_circle'}</span>
-                                    {isPlaying ? 'Pausar Rádio' : 'Ouvir Rádio ao Vivo'}
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Filter List - Mobile Friendly */}
-                    <div className="sticky top-16 md:top-20 z-40 bg-background/60 backdrop-blur-md py-4">
-                        <div className="max-w-container-max mx-auto flex gap-2 px-6 overflow-x-auto hide-scrollbar">
-                            <button onClick={() => setActiveFilter('Todos')} className={`px-5 py-2.5 rounded-full font-label-lg whitespace-nowrap transition-all ${activeFilter === 'Todos' ? 'active-filter' : 'bg-surface-container-highest/50 text-on-surface-variant hover:bg-surface-container-highest'}`}>Todos</button>
-                            <button onClick={() => setActiveFilter('Culto')} className={`px-5 py-2.5 rounded-full font-label-lg whitespace-nowrap transition-all ${activeFilter === 'Culto' ? 'active-filter' : 'bg-surface-container-highest/50 text-on-surface-variant hover:bg-surface-container-highest'}`}>Culto</button>
-                            <button onClick={() => setActiveFilter('Conferência')} className={`px-5 py-2.5 rounded-full font-label-lg whitespace-nowrap transition-all ${activeFilter === 'Conferência' ? 'active-filter' : 'bg-surface-container-highest/50 text-on-surface-variant hover:bg-surface-container-highest'}`}>Conferência</button>
-                            <button onClick={() => setActiveFilter('Juventude')} className={`px-5 py-2.5 rounded-full font-label-lg whitespace-nowrap transition-all ${activeFilter === 'Juventude' ? 'active-filter' : 'bg-surface-container-highest/50 text-on-surface-variant hover:bg-surface-container-highest'}`}>Juventude</button>
-                        </div>
-                    </div>
-
-                    {/* Events Section */}
-                    <section id="eventos" className="max-w-container-max mx-auto px-6 md:px-margin-desktop py-8 space-y-10">
-                        <div className="flex justify-between items-end">
-                            <div>
-                                <h2 className="font-bold text-3xl md:text-headline-xl text-on-background tracking-tight">Agenda do Reino</h2>
-                                <p className="text-on-surface-variant font-medium mt-1">Junte-se a nós em celebração.</p>
-                            </div>
-                        </div>
-                        
-                        {isLoadingEvents ? (
-                            <div className="py-20 flex justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
-                        ) : events.length === 0 ? (
-                            <div className="glass-card rounded-[2rem] p-12 text-center text-on-surface-variant border-dashed">
-                                A agenda está sendo atualizada. Volte em breve!
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {events.map((ev) => (
-                                    <article key={ev.id} onClick={() => setSelectedEvent(ev)} className="relative rounded-3xl overflow-hidden shadow-sm group bg-white border border-outline-variant/20 cursor-pointer transition-all hover:shadow-xl">
-                                        <div className="aspect-[4/5] w-full overflow-hidden">
-                                            <img src={ev.imageUrl} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-80"></div>
-                                        </div>
-                                        <div className="absolute inset-x-0 bottom-0 p-3">
-                                            <div className="glass-card rounded-[2rem] p-6 w-full border-none shadow-lg">
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <div className="space-y-1 min-w-0 pr-4">
-                                                        <span className="text-[10px] uppercase tracking-widest font-bold text-primary px-3 py-1 bg-primary/10 rounded-full inline-block truncate max-w-full">Evento</span>
-                                                        <h3 className="font-headline-lg text-on-surface truncate">{ev.title}</h3>
-                                                    </div>
-                                                    <div className="text-right shrink-0">
-                                                        <p className="text-2xl font-bold text-primary leading-none">{new Date(ev.date + 'T12:00:00').getDate()}</p>
-                                                        <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">
-                                                            {new Date(ev.date + 'T12:00:00').toLocaleDateString('pt-BR', {month: 'short'})}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-4 text-on-surface-variant font-label-sm md:font-label-lg border-t border-outline-variant/30 pt-4">
-                                                    <div className="flex items-center gap-1.5 shrink-0">
-                                                        <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
-                                                        <span>{ev.time}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 min-w-0">
-                                                        <span className="material-symbols-outlined text-[18px] text-primary shrink-0">location_on</span>
-                                                        <span className="truncate">{ev.location}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
-                        )}
-                    </section>
-
-                    {/* Social/Instagram */}
-                    <section className="bg-surface-container-low py-16 px-6 md:px-margin-desktop mt-8">
-                        <div className="max-w-container-max mx-auto">
-                            <div className="text-center mb-10">
-                                <h2 className="font-bold text-3xl md:text-headline-xl text-on-background tracking-tight">Siga nossa Jornada</h2>
-                                <p className="text-on-surface-variant font-medium mt-2">Conecte-se conosco no dia a dia.</p>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="aspect-square bg-white p-1.5 rounded-3xl shadow-sm border border-white/50 group overflow-hidden">
-                                    <img className="w-full h-full object-cover rounded-[1.25rem] group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMvw_TLNckaaM9q-QeIQumpvfOKX3BznAzBlg-VO7cs9PUe7pmNa6XnRuT834cCoST0wzTdKuQEVioDqabR0DNRdfpvpwtnnoaaQdNb3mfzOE2hFKpLjrZl8GIiJqwYgyHNeTYh92tiybzTYh6TF1Lnqr0hEJnt-H5ZwqdnwgZDIywzr0b1at6E-E05xs9IO3ibJ_Ko_8sVT_xRFEHQpRmziX3bmOyMoNuhvRg8nxsJ6xf5Cm3hK91iE0yxQKLiVRPtJBNJJeX7jcO" />
+                    <main className="pt-24 px-6 space-y-8">
+                        {events.map(ev => (
+                            <article key={ev.id} onClick={() => setSelectedEvent(ev)} className="rounded-3xl overflow-hidden cursor-pointer bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all">
+                                <img src={ev.imageUrl} className="w-full aspect-video object-cover" />
+                                <div className="p-6">
+                                    <h3 className="font-bold text-xl">{ev.title}</h3>
+                                    <p className="text-gray-500 text-sm">{ev.date} • {ev.time}</p>
                                 </div>
-                                <div className="aspect-square bg-white p-1.5 rounded-3xl shadow-sm border border-white/50 group overflow-hidden">
-                                    <img className="w-full h-full object-cover rounded-[1.25rem] group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuZYeK2_bAbWmuAYWFgGjJCI4c02BP42EyaZbHgWjNS72K7wzFM1UP1GPYE-gHU2p4fmLYhoGP1EKSYMLBB_7_Sys7lvIKmSnBuDX-M_H5nToPQ1VO-Bu98QgHWae7kOHAJPgIecAdCQ4aOntZlE-5EB1-a7qNLXn72I1p8R3X37p0fiNZzh683uPQ9_4ZAp0nv0sHAcrkAQpWvwL1Y2xRABistqCDke2phb9Z_Aj8whTcJizpaINKEr5UbuoN1oi0XEkQabi263Tk" />
-                                </div>
-                                <div className="aspect-square bg-white p-1.5 rounded-3xl shadow-sm border border-white/50 group overflow-hidden hidden md:block">
-                                    <img className="w-full h-full object-cover rounded-[1.25rem] group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhz3uhtNqmQ70-JeazBzoeW9T3Fm5tjH1U3y2E0xI-RW3zgsnnGgusi4m73g--eupgu0Bkr4L5--0LljweU5bGLjPB13_VJy3nt_gUP-R28PioL84gyGwqWz6c4sSo34PxhkxX7xsi87GrqJ7shSiTVNyP8A-XNigNEtJec-cKXNNyN-G0ZEoFWnWUhxAps0uxwILN1dxopTzvhEkwZcQ6DUFSUTsJxa2kL1cFP1pu9KY0q9sCuD27VusJyfqJ3YMOF4mE9SQXYe_j" />
-                                </div>
-                                <a href="#" className="aspect-square glass-card rounded-3xl flex flex-col justify-center items-center text-center p-4 border border-white/50 hover:bg-white/50 transition-colors">
-                                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
-                                        <IconInstagram className="text-primary" />
-                                    </div>
-                                    <p className="font-bold text-primary text-sm uppercase tracking-wider">Instagram</p>
-                                </a>
-                            </div>
-                        </div>
-                    </section>
+                            </article>
+                        ))}
+                    </main>
 
-                    {/* Location */}
-                    <section id="local" className="px-6 md:px-margin-desktop py-20">
-                        <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                            <div className="text-center md:text-left space-y-6">
-                                <h2 className="font-bold text-3xl md:text-headline-xl text-on-background tracking-tight">Onde Estamos</h2>
-                                <div className="space-y-4">
-                                    <div className="flex gap-4 items-center justify-center md:justify-start">
-                                        <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="font-bold text-on-surface">Endereço Principal</p>
-                                            <p className="text-on-surface-variant font-medium">Av. da Aliança Eterna, 1234 - Bairro Celestial</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="https://maps.google.com/?q=Igreja+Eterna+Alianca" target="_blank" className="w-full md:w-auto inline-block bg-primary text-on-primary px-8 py-5 md:py-4 rounded-2xl font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-all text-center">
-                                    Como Chegar
-                                </a>
-                            </div>
-                            <div className="rounded-[2.5rem] overflow-hidden h-72 md:h-96 shadow-2xl shadow-primary/10 border-4 border-white relative">
-                                <img className="w-full h-full object-cover grayscale brightness-110 opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRY8tqNkm5K9V1G-nm1QjSkKpC7rK3hmMN_5PucTBIxYB_LHgxddJGK_3omtQVXlbTppFjXqziJKJMSoLwN9L3BRHDrraNzk7kSB4T6EIEDd0TzkGHwGEnGuQas0Og_FxwnV894sYFbz4rkX21bO2KyfpXlXoPP8UJcAiEI3f0HoZqZF6kAc01NxhJGQHCrJwpr8BwD3CBenWLqAjw_jIMoVXeu0b4IqQFUb6xXSojrfmc_2GDOyxtaxURvmc0msrEQztGlp3MEQKi"/>
-                                <div className="absolute inset-0 bg-primary/5 flex items-center justify-center">
-                                    <div className="bg-white p-4 rounded-full shadow-[0_20px_50px_rgba(0,74,198,0.3)] animate-float">
-                                        <span className="material-symbols-outlined text-primary text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>location_on</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Footer */}
-                    <footer className="bg-surface-container-lowest py-20 px-6 border-t border-white/50 mb-20 md:mb-0">
-                        <div className="max-w-container-max mx-auto flex flex-col items-center text-center space-y-8">
-                            <div className="space-y-4">
-                                <span className="font-bold text-2xl text-on-surface tracking-tight">Eterna Aliança</span>
-                                <p className="font-medium text-secondary/80 max-w-xs mx-auto">Levando a mensagem do Reino através da arte e tecnologia.</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <a href="#" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-colors"><IconInstagram size={18}/></a>
-                                <a href="#" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-colors"><IconFacebook size={18}/></a>
-                                <a href="#" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-colors"><IconYoutube size={18}/></a>
-                            </div>
-                            <p className="text-[11px] font-bold text-secondary-fixed/50 uppercase tracking-[0.2em]">© 2026 IGREJA ETERNA ALIANÇA</p>
-                        </div>
-                    </footer>
-
-                    {/* Floating Radio Player - Appears ONLY when docked (after user hits play once) */}
+                    {/* Radio Floating (Only visible after play) */}
                     {isRadioDocked && (
-                        <div className="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-[92%] md:w-auto md:min-w-[400px] max-w-lg animate-fade-in-up">
-                            <div className="glass-morphism-heavy rounded-full p-2.5 flex items-center justify-between shadow-[0_20px_60px_-15px_rgba(0,74,198,0.3)] border border-white/80">
-                                <div className="flex items-center space-x-4 pl-2 overflow-hidden">
-                                    <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center overflow-hidden shrink-0">
-                                        <div className="flex items-end space-x-1 h-5">
-                                            <div className={`w-1 bg-white rounded-full h-1/2 ${isPlaying ? 'animate-[pulse-bar_1.2s_infinite_alternate]' : ''}`}></div>
-                                            <div className={`w-1 bg-white rounded-full h-full ${isPlaying ? 'animate-[pulse-bar_0.8s_infinite_alternate]' : ''}`}></div>
-                                            <div className={`w-1 bg-white rounded-full h-2/3 ${isPlaying ? 'animate-[pulse-bar_1.5s_infinite_alternate]' : ''}`}></div>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col min-w-0 pr-4">
-                                        <span className="text-[9px] font-bold text-primary uppercase tracking-[0.2em] leading-none mb-1">{isPlaying ? 'AO VIVO' : 'RÁDIO'}</span>
-                                        <span className="text-sm font-bold text-on-surface truncate">Eterna Web Rádio</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-1.5 pr-1.5 shrink-0">
-                                    <button onClick={togglePlay} className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-90 transition-transform">
-                                        <span className="material-symbols-outlined text-3xl" style={{fontVariationSettings: "'FILL' 1"}}>{isPlaying ? 'pause' : 'play_arrow'}</span>
-                                    </button>
-                                </div>
-                            </div>
+                        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-sm glass-morphism-heavy rounded-full p-4 flex items-center justify-between">
+                            <span className="text-xs font-bold text-[#004ac6]">AO VIVO</span>
+                            <button onClick={togglePlay} className="w-10 h-10 rounded-full bg-[#004ac6] text-white flex items-center justify-center">
+                                {isPlaying ? <span className="material-symbols-outlined">pause</span> : <span className="material-symbols-outlined">play_arrow</span>}
+                            </button>
                         </div>
                     )}
 
-                    {/* Bottom Mobile Navigation Shell */}
-                    <nav className="fixed bottom-0 w-full bg-surface/80 backdrop-blur-2xl border-t border-white/30 z-50 h-20 px-8 flex justify-between items-center md:hidden safe-bottom">
-                        <a href="#home" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all group">
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Home</span>
-                        </a>
-                        <a href="#eventos" className="flex flex-col items-center gap-1 text-primary transition-all">
-                            <span className="material-symbols-outlined scale-110" style={{fontVariationSettings: "'FILL' 1"}}>calendar_month</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Eventos</span>
-                        </a>
-                        <a href="#" onClick={(e) => {e.preventDefault(); togglePlay();}} className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all group">
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">radio</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Rádio</span>
-                        </a>
-                        <a href="admin.html" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all group">
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">admin_panel_settings</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Admin</span>
-                        </a>
-                    </nav>
-
-                    {/* Event Modal */}
+                    {/* Modal Evento */}
                     {selectedEvent && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm animate-fade-in-up">
-                            <div className="bg-surface rounded-[2.5rem] w-full max-w-lg shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
-                                <div className="relative aspect-[4/3] w-full">
-                                    <img src={selectedEvent.imageUrl} className="w-full h-full object-cover" alt={selectedEvent.title} />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-                                    <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white transition-colors z-10">
-                                        <span className="material-symbols-outlined text-on-surface">close</span>
-                                    </button>
-                                </div>
-                                <div className="p-8 pt-0 -mt-10 relative z-10 flex-1 overflow-y-auto">
-                                    <h2 className="text-headline-xl font-bold text-on-surface mb-6">{selectedEvent.title}</h2>
-                                    
-                                    <div className="space-y-4 mb-8">
-                                        <div className="flex gap-4 items-center">
-                                            <div className="w-12 h-12 rounded-2xl bg-primary-container/30 flex items-center justify-center shrink-0">
-                                                <span className="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-on-surface text-sm">Data e Hora</p>
-                                                <p className="text-on-surface-variant font-medium">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('pt-BR')} às {selectedEvent.time}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-4 items-center">
-                                            <div className="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center shrink-0">
-                                                <span className="material-symbols-outlined text-on-secondary-container text-[20px]">location_on</span>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-on-surface text-sm">Local</p>
-                                                <p className="text-on-surface-variant font-medium">{selectedEvent.location}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="mb-8">
-                                        <h4 className="font-bold text-on-surface mb-2">Sobre</h4>
-                                        <p className="text-on-surface-variant leading-relaxed">{selectedEvent.description}</p>
-                                    </div>
-
-                                    <a href={generateGoogleCalendarUrl(selectedEvent)} target="_blank" className="w-full flex items-center justify-center gap-2 bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
-                                        <span className="material-symbols-outlined text-[20px]">event_available</span>
-                                        Marcar na Agenda
-                                    </a>
-                                </div>
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
+                            <div className="bg-white rounded-3xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+                                <img src={selectedEvent.imageUrl} className="w-full h-48 object-cover rounded-2xl mb-4"/>
+                                <h2 className="text-2xl font-bold mb-2">{selectedEvent.title}</h2>
+                                <p className="text-sm text-gray-600 mb-4">{selectedEvent.description}</p>
+                                <p className="text-sm mb-4"><strong>De:</strong> {selectedEvent.date} {selectedEvent.time} <strong>até:</strong> {selectedEvent.endDate || 'Término não definido'} {selectedEvent.endTime}</p>
+                                <a href={generateGoogleCalendarUrl(selectedEvent)} target="_blank" className="block text-center bg-[#004ac6] text-white py-3 rounded-xl font-bold">Marcar na Agenda</a>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Global Toast */}
-                    {toast.visible && (
-                        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100] glass-morphism-heavy px-6 py-3 rounded-full flex items-center gap-2 text-on-surface font-label-lg animate-fade-in-up border border-white/50 shadow-xl w-max max-w-[90%]">
-                            <span className={`material-symbols-outlined shrink-0 ${toast.type === 'error' ? 'text-error' : 'text-green-500'}`}>{toast.type === 'error' ? 'error' : 'check_circle'}</span>
-                            <span className="truncate">{toast.message}</span>
                         </div>
                     )}
                 </div>
             );
         }
-
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
