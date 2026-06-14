@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eterna Aliança</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'blob': 'blob 10s infinite',
+                        'bounce-fast': 'bounce 1s infinite',
+                        'bounce-med': 'bounce 1.2s infinite',
+                        'bounce-slow': 'bounce 0.8s infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 antialiased text-slate-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- ICONS (Inline SVG Components for Standalone HTML) ---
+        const IconPlay = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>;
+        const IconPause = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>;
+        const IconCalendar = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
+        const IconMapPin = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>;
+        const IconInfo = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>;
+        const IconInstagram = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>;
+        const IconFacebook = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>;
+        const IconYoutube = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>;
+        const IconChevronLeft = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="15 18 9 12 15 6"></polyline></svg>;
+        const IconChevronRight = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"></polyline></svg>;
+        const IconUpload = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>;
+        const IconPlus = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
+        const IconTrash2 = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
+        const IconX = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
+        const IconLock = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>;
+
+        const IMGBB_API_KEY = '9ce6742772f2469096b3d99e811000b9';
+        const RADIO_STREAM_URL = 'https://stream.zeno.fm/4zq8f5ym0mwtv'; 
+        // COLE AQUI A URL GERADA PELO GOOGLE APPS SCRIPT:
+        const GOOGLE_API_URL = 'https://script.google.com/macros/s/SUA_URL_AQUI/exec'; 
+
+        function App() {
+            // --- STATES ---
+            const [events, setEvents] = useState([]);
+            const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+            const [activeSlide, setActiveSlide] = useState(0);
+            const [selectedEvent, setSelectedEvent] = useState(null);
+            
+            // Radio States
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [isRadioDocked, setIsRadioDocked] = useState(false);
+            const audioRef = useRef(null);
+
+            // Admin States
+            const [isAdminAuth, setIsAdminAuth] = useState(false);
+            const [showAdminLogin, setShowAdminLogin] = useState(false);
+            const [adminPassInput, setAdminPassInput] = useState('');
+            const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+            // Form State
+            const [isUploading, setIsUploading] = useState(false);
+            const [newEvent, setNewEvent] = useState({ title: '', date: '', time: '', location: '', description: '', imageUrl: '' });
+
+            // Custom Notification & Confirmation Modal States
+            const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
+            const [confirmDialog, setConfirmDialog] = useState({ visible: false, id: null, message: '' });
+
+            const showToast = (message, type = 'success') => {
+                setToast({ visible: true, message, type });
+                setTimeout(() => setToast({ visible: false, message: '', type: 'success' }), 4000);
+            };
+
+            const fetchEvents = async () => {
+                setIsLoadingEvents(true);
+                try {
+                    if (GOOGLE_API_URL.includes('SUA_URL_AQUI')) {
+                        setIsLoadingEvents(false);
+                        return;
+                    }
+                    const response = await fetch(GOOGLE_API_URL);
+                    const data = await response.json();
+                    setEvents(data);
+                } catch (error) {
+                    console.error("Erro ao carregar eventos:", error);
+                    showToast("Falha ao carregar eventos.", "error");
+                } finally {
+                    setIsLoadingEvents(false);
+                }
+            };
+
+            useEffect(() => {
+                fetchEvents();
+                
+                const checkHashRoute = () => {
+                    if (window.location.hash === '#/adm') {
+                        if (!isAdminAuth) {
+                            setShowAdminLogin(true);
+                        } else {
+                            setShowAdminPanel(true);
+                        }
+                    }
+                };
+                
+                checkHashRoute(); 
+                window.addEventListener('hashchange', checkHashRoute); 
+                return () => window.removeEventListener('hashchange', checkHashRoute);
+            }, [isAdminAuth]);
+
+            // Auto-play do Carrossel
+            useEffect(() => {
+                if (events.length === 0 || showAdminPanel || selectedEvent) return;
+                
+                const interval = setInterval(() => {
+                    setActiveSlide((prev) => (prev === events.length - 1 ? 0 : prev + 1));
+                }, 5000);
+                
+                return () => clearInterval(interval);
+            }, [events.length, showAdminPanel, selectedEvent]);
+
+            const togglePlay = () => {
+                if (!audioRef.current) return;
+                
+                if (isPlaying) {
+                    audioRef.current.pause();
+                    setIsPlaying(false);
+                } else {
+                    audioRef.current.play();
+                    setIsPlaying(true);
+                    setIsRadioDocked(true);
+                }
+            };
+
+            const generateGoogleCalendarUrl = (event) => {
+                const startDate = new Date(`${event.date}T${event.time}`);
+                const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
+                
+                const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+                const url = new URL('https://calendar.google.com/calendar/render');
+                url.searchParams.append('action', 'TEMPLATE');
+                url.searchParams.append('text', event.title);
+                url.searchParams.append('dates', `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`);
+                url.searchParams.append('details', event.description);
+                url.searchParams.append('location', event.location);
+                
+                return url.toString();
+            };
+
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                if (adminPassInput.length > 0) {
+                    setIsAdminAuth(true);
+                    setShowAdminLogin(false);
+                    setShowAdminPanel(true);
+                } else {
+                    showToast("Digite a senha de administrador.", "error");
+                }
+            };
+
+            const handleImageUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setIsUploading(true);
+                const formData = new FormData();
+                formData.append('image', file);
+
+                try {
+                    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setNewEvent({ ...newEvent, imageUrl: data.data.url });
+                    } else {
+                        showToast("Erro ao fazer upload da imagem.", "error");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showToast("Erro de conexão ao fazer upload.", "error");
+                } finally {
+                    setIsUploading(false);
+                }
+            };
+
+            const handleSaveEvent = async (e) => {
+                e.preventDefault();
+                if (GOOGLE_API_URL.includes('SUA_URL_AQUI')) {
+                    showToast("Configure a URL do Google Apps Script no código!", "error");
+                    return;
+                }
+
+                const eventToSave = { ...newEvent, id: Date.now() };
+                const updatedEvents = [...events, eventToSave];
+                setEvents(updatedEvents); // UI otimista
+                
+                try {
+                    const response = await fetch(GOOGLE_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'add', password: adminPassInput, event: eventToSave })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.error) {
+                        showToast("Erro do servidor: " + result.error, "error");
+                        fetchEvents(); 
+                    } else {
+                        setNewEvent({ title: '', date: '', time: '', location: '', description: '', imageUrl: '' });
+                        showToast("Evento publicado com sucesso!");
+                    }
+                } catch (error) {
+                    showToast("Erro ao salvar no banco de dados.", "error");
+                }
+            };
+
+            const triggerDelete = (id) => {
+                setConfirmDialog({ visible: true, id: id, message: "Tem certeza que deseja excluir este evento?" });
+            };
+
+            const confirmDeleteAction = async () => {
+                const id = confirmDialog.id;
+                setConfirmDialog({ visible: false, id: null, message: '' });
+
+                const updatedEvents = events.filter(ev => ev.id !== id);
+                setEvents(updatedEvents);
+                
+                if (activeSlide >= updatedEvents.length && updatedEvents.length > 0) {
+                    setActiveSlide(updatedEvents.length - 1);
+                }
+
+                try {
+                    const response = await fetch(GOOGLE_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'delete', password: adminPassInput, id: id })
+                    });
+                    const result = await response.json();
+                    if (result.error) {
+                        showToast("Erro do servidor: " + result.error, "error");
+                        fetchEvents(); 
+                    } else {
+                        showToast("Evento excluído.");
+                    }
+                } catch (error) {
+                    showToast("Erro ao excluir no banco de dados.", "error");
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-50 pb-32 overflow-x-hidden">
+                    <audio ref={audioRef} src={RADIO_STREAM_URL} preload="none" />
+
+                    {/* --- NOTIFICATIONS (Custom Toast) --- */}
+                    {toast.visible && (
+                        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] animate-fade-in-up">
+                            <div className={`px-6 py-3 rounded-full shadow-lg backdrop-blur-md text-white font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500/90 border border-red-400' : 'bg-emerald-500/90 border border-emerald-400'}`}>
+                                {toast.type === 'error' ? <IconInfo size={18} /> : <IconPlay size={18} />}
+                                {toast.message}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- CONFIRMATION DIALOG (Custom Modal) --- */}
+                    {confirmDialog.visible && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                            <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-fade-in-up">
+                                <h3 className="text-xl font-bold mb-2">Atenção</h3>
+                                <p className="text-slate-600 mb-6">{confirmDialog.message}</p>
+                                <div className="flex gap-4">
+                                    <button onClick={() => setConfirmDialog({ visible: false, id: null, message: '' })} className="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+                                    <button onClick={confirmDeleteAction} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition">Excluir</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- NAVBAR --- */}
+                    <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-amber-400 font-bold text-xl">
+                                    EA
+                                </div>
+                                <span className="font-extrabold text-xl tracking-tight text-slate-900">
+                                    Eterna Aliança
+                                </span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-8 font-medium text-sm">
+                                <a href="#home" className="hover:text-amber-500 transition-colors">Início</a>
+                                <a href="#eventos" className="hover:text-amber-500 transition-colors">Eventos</a>
+                                <a href="#radio" className="hover:text-amber-500 transition-colors">Rádio</a>
+                                <a href="#local" className="hover:text-amber-500 transition-colors">Localização</a>
+                                <a href="#/adm" className="hover:text-amber-500 transition-colors flex items-center gap-1 opacity-50"><IconLock size={14}/> Admin</a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* --- HERO SECTION (Aurora/Apple Style) --- */}
+                    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900 pt-20">
+                        <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-blue-600/30 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+                        <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-amber-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob" style={{animationDelay: '2s'}}></div>
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40rem] h-[30rem] bg-indigo-600/20 rounded-full mix-blend-screen filter blur-[120px] animate-blob" style={{animationDelay: '4s'}}></div>
+
+                        <div className="relative z-10 px-6 max-w-5xl mx-auto text-center flex flex-col items-center">
+                            <div className="inline-flex items-center gap-2 mb-8 px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl text-amber-300 text-sm font-semibold tracking-widest uppercase shadow-2xl">
+                                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                Bem-vindo à sua nova casa
+                            </div>
+                            
+                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white mb-8 leading-[1.05]">
+                                Aliança <br className="hidden md:block"/>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-lg">
+                                    Eterna.
+                                </span>
+                            </h1>
+                            
+                            <p className="text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+                                Um lugar de propósito, adoração e comunhão genuína. Conecte-se com Deus e com nossa família.
+                            </p>
+                            
+                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                                <a href="#eventos" className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full font-bold text-lg transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2">
+                                    <IconCalendar size={20} />
+                                    Nossa Agenda
+                                </a>
+                                <a href="#radio" onClick={(e) => { e.preventDefault(); togglePlay(); }} className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-full font-bold text-lg transition-all backdrop-blur-md flex items-center justify-center gap-2">
+                                    {isPlaying ? <IconPause size={20} /> : <IconPlay size={20} />}
+                                    Ouvir Rádio
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="eventos" className="relative py-24 min-h-[80vh] flex items-center overflow-hidden bg-slate-900">
+                        {/* Dynamic Ambient Background */}
+                        {events.length > 0 && (
+                            <div className="absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out">
+                                <img src={events[activeSlide]?.imageUrl} alt="background" className="w-full h-full object-cover opacity-30 transform scale-125 blur-3xl" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-slate-900"></div>
+                            </div>
+                        )}
+
+                        <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+                            <div className="flex items-end justify-between mb-12">
+                                <div>
+                                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">Em Destaque</h2>
+                                    <p className="text-slate-400 text-lg">Próximos passos da nossa comunidade</p>
+                                </div>
+                                
+                                {events.length > 0 && (
+                                    <div className="hidden md:flex gap-3">
+                                        <button onClick={() => setActiveSlide(prev => prev === 0 ? events.length - 1 : prev - 1)} className="p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition text-white border border-white/10"><IconChevronLeft size={24} /></button>
+                                        <button onClick={() => setActiveSlide(prev => prev === events.length - 1 ? 0 : prev + 1)} className="p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition text-white border border-white/10"><IconChevronRight size={24} /></button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {isLoadingEvents ? (
+                                <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-12 text-center text-slate-400 border border-white/10 flex flex-col items-center">
+                                    <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                    Buscando agenda no servidor...
+                                </div>
+                            ) : events.length === 0 ? (
+                                <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-12 text-center text-slate-400 border border-white/10">
+                                    Nenhum evento programado no momento.
+                                </div>
+                            ) : (
+                                <div className="relative">
+                                    {events.map((event, index) => (
+                                        <div key={event.id} className={`${index === activeSlide ? 'block animate-fade-in-up' : 'hidden'} w-full`}>
+                                            <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
+                                                
+                                                {/* BANNER VERTICAL PROTEGIDO */}
+                                                <div className="w-full sm:w-2/3 md:w-5/12 flex-shrink-0" style={{perspective: '1000px'}}>
+                                                    <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 group transform transition-transform duration-700 hover:rotate-y-2 hover:scale-[1.02]">
+                                                        <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110 ease-out" />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                                    </div>
+                                                </div>
+
+                                                {/* INFOS */}
+                                                <div className="w-full md:w-7/12 text-white flex flex-col justify-center">
+                                                    <div className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-amber-500/20 self-start backdrop-blur-md">
+                                                        <IconCalendar size={16} />
+                                                        {new Date(event.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase()} 
+                                                        <span className="mx-1">•</span> {event.time}
+                                                    </div>
+                                                    
+                                                    <h3 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-lg">{event.title}</h3>
+                                                    
+                                                    <div className="flex items-center gap-3 text-slate-300 mb-6 font-medium text-lg">
+                                                        <div className="p-2 rounded-full bg-white/10"><IconMapPin size={20} className="text-amber-400" /></div>
+                                                        {event.location}
+                                                    </div>
+                                                    
+                                                    <p className="text-slate-400 text-lg md:text-xl mb-10 line-clamp-3 leading-relaxed font-light">{event.description}</p>
+
+                                                    <button onClick={() => setSelectedEvent(event)} className="bg-white text-slate-900 hover:bg-amber-400 font-bold py-4 px-10 rounded-full transition-all transform hover:scale-105 shadow-xl flex items-center gap-3 self-start text-lg">
+                                                        <IconInfo size={20} /> Detalhes e Inscrição
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    
+                                    <div className="mt-12 flex items-center justify-between md:justify-center gap-4">
+                                        <button onClick={() => setActiveSlide(prev => prev === 0 ? events.length - 1 : prev - 1)} className="md:hidden p-3 rounded-full bg-white/10 text-white"><IconChevronLeft size={20} /></button>
+                                        <div className="flex gap-3">
+                                            {events.map((_, idx) => (
+                                                <button key={idx} onClick={() => setActiveSlide(idx)} className={`h-2 rounded-full transition-all duration-500 ${idx === activeSlide ? 'w-10 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/50'}`} />
+                                            ))}
+                                        </div>
+                                        <button onClick={() => setActiveSlide(prev => prev === events.length - 1 ? 0 : prev + 1)} className="md:hidden p-3 rounded-full bg-white/10 text-white"><IconChevronRight size={20} /></button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {!isRadioDocked && (
+                        <section id="radio" className="py-20 bg-slate-900 text-white relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+                            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+                                <h2 className="text-4xl font-bold mb-4">Rádio Eterna Aliança</h2>
+                                <p className="text-slate-400 mb-10">Ouça louvores e a palavra de Deus 24 horas por dia, onde quer que você esteja.</p>
+                                
+                                <button onClick={togglePlay} className="group relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-white text-slate-900 hover:bg-amber-400 transition-all duration-300 hover:scale-110 shadow-2xl">
+                                    {isPlaying ? <IconPause size={40} className="ml-1" /> : <IconPlay size={40} className="ml-2" />}
+                                    {isPlaying && <div className="absolute -inset-4 border border-amber-400/50 rounded-full animate-ping" />}
+                                </button>
+                                <p className="mt-6 text-sm font-medium tracking-widest uppercase text-amber-500">
+                                    {isPlaying ? 'Ao Vivo Agora' : 'Aperte o Play'}
+                                </p>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* --- LOCALIZAÇÃO --- */}
+                    <section id="local" className="py-20 bg-slate-50">
+                        <div className="max-w-7xl mx-auto px-6">
+                            <div className="bg-white rounded-[2rem] shadow-xl p-8 md:p-16 flex flex-col md:flex-row items-center gap-12">
+                                <div className="flex-1 text-center md:text-left">
+                                    <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
+                                        <IconMapPin size={32} />
+                                    </div>
+                                    <h2 className="text-3xl font-bold mb-4">Venha nos Visitar</h2>
+                                    <p className="text-slate-500 text-lg mb-8">
+                                        Av. Principal, 1234 - Centro<br/>
+                                        Cidade - Estado, CEP 00000-000
+                                    </p>
+                                    <a href="https://maps.google.com/?q=Igreja+Eterna+Alianca" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-8 rounded-full transition-colors">
+                                        Como Chegar
+                                    </a>
+                                </div>
+                                <div className="flex-1 w-full h-64 md:h-96 rounded-3xl overflow-hidden bg-slate-200 relative">
+                                    <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400">
+                                        <IconMapPin size={48} className="mb-2 opacity-50" />
+                                        <span>Mapa Interativo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer className="bg-slate-900 pt-16 pb-8 text-slate-400">
+                        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-2 text-white opacity-80 hover:opacity-100 transition-opacity">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-sm">EA</div>
+                                <span className="font-bold tracking-wider">ETERNA ALIANÇA</span>
+                            </div>
+                            <div className="flex gap-4">
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconInstagram size={20}/></a>
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconFacebook size={20}/></a>
+                                <a href="#" className="p-2 rounded-full hover:bg-slate-800 hover:text-white transition-colors"><IconYoutube size={20}/></a>
+                            </div>
+                        </div>
+                        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs">
+                            <p>© 2026 Igreja Eterna Aliança. Todos os direitos reservados.</p>
+                            <a href="#/adm" className="mt-4 md:mt-0 flex items-center gap-1 hover:text-amber-500 transition-colors opacity-50 hover:opacity-100"><IconLock size={12}/> Admin</a>
+                        </div>
+                    </footer>
+
+                    {/* --- FLOATING RADIO PLAYER --- */}
+                    {isRadioDocked && (
+                        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-8 md:w-80 z-50 animate-fade-in-up">
+                            <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-4 text-white">
+                                <button onClick={togglePlay} className="w-12 h-12 flex-shrink-0 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+                                    {isPlaying ? <IconPause size={20} className="ml-[1px]" /> : <IconPlay size={20} className="ml-1" />}
+                                </button>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-sm truncate">Rádio Eterna Aliança</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        {isPlaying && (
+                                            <span className="flex gap-[2px] h-3 items-end">
+                                                <span className="w-1 bg-amber-500 animate-bounce-fast h-full"></span>
+                                                <span className="w-1 bg-amber-500 animate-bounce-med h-2/3"></span>
+                                                <span className="w-1 bg-amber-500 animate-bounce-slow h-4/5"></span>
+                                            </span>
+                                        )}
+                                        <p className="text-xs text-slate-400 truncate">{isPlaying ? 'Tocando ao vivo' : 'Pausado'}</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => { setIsRadioDocked(false); if(isPlaying) togglePlay(); }} className="text-slate-500 hover:text-white p-1">
+                                    <IconX size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- EVENT MODAL --- */}
+                    {selectedEvent && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedEvent(null)} />
+                            <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden relative z-10 animate-fade-in-up shadow-2xl">
+                                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 backdrop-blur-md transition">
+                                    <IconX size={20} />
+                                </button>
+                                <div className="h-64 md:h-80 w-full relative">
+                                    <img src={selectedEvent.imageUrl} alt={selectedEvent.title} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+                                    <div className="absolute bottom-6 left-6 text-white">
+                                        <h2 className="text-3xl font-bold mb-2">{selectedEvent.title}</h2>
+                                    </div>
+                                </div>
+                                <div className="p-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                        <div className="flex items-center gap-4 text-slate-600">
+                                            <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0"><IconCalendar size={24} /></div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-900">Data e Hora</p>
+                                                <p>{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('pt-BR')} às {selectedEvent.time}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 text-slate-600">
+                                            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0"><IconMapPin size={24} /></div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-900">Local</p>
+                                                <p className="truncate w-40 md:w-auto" title={selectedEvent.location}>{selectedEvent.location}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mb-8">
+                                        <h4 className="font-bold text-slate-900 mb-2">Sobre o evento</h4>
+                                        <p className="text-slate-600 leading-relaxed">{selectedEvent.description}</p>
+                                    </div>
+                                    <a href={generateGoogleCalendarUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-colors">
+                                        <IconCalendar size={20} /> Marcar no Calendário
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- ADMIN LOGIN MODAL --- */}
+                    {showAdminLogin && (
+                        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+                            <form onSubmit={handleAdminLogin} className="bg-white p-8 rounded-3xl w-full max-w-sm relative animate-fade-in-up">
+                                <button type="button" onClick={() => { setShowAdminLogin(false); window.location.hash = ''; }} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900"><IconX size={20} /></button>
+                                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-900"><IconLock size={24} /></div>
+                                <h3 className="text-2xl font-bold mb-2">Acesso Restrito</h3>
+                                <p className="text-slate-500 mb-6 text-sm">Área de gerenciamento do site.</p>
+                                <input type="password" placeholder="Senha" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} className="w-full p-3 rounded-xl border border-slate-200 mb-4 focus:ring-2 focus:ring-amber-500 outline-none" autoFocus />
+                                <button type="submit" className="w-full bg-amber-500 text-slate-900 font-bold py-3 rounded-xl">Entrar</button>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* --- ADMIN PANEL --- */}
+                    {showAdminPanel && isAdminAuth && (
+                        <div className="fixed inset-0 z-[80] bg-slate-100 flex flex-col md:flex-row overflow-hidden animate-fade-in-up">
+                            <div className="w-full md:w-80 bg-slate-900 text-white p-6 flex flex-col">
+                                <div className="flex justify-between items-center mb-10">
+                                    <h2 className="text-xl font-bold">Painel Admin</h2>
+                                    <button onClick={() => { setShowAdminPanel(false); window.location.hash = ''; }} className="bg-white/10 p-2 rounded-lg hover:bg-white/20"><IconX size={20} /></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto pr-2">
+                                    <h3 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Eventos Atuais</h3>
+                                    <div className="space-y-3">
+                                        {events.map(ev => (
+                                            <div key={ev.id} className="bg-white/5 p-4 rounded-xl flex items-center justify-between group border border-white/5">
+                                                <div className="min-w-0">
+                                                    <p className="font-medium truncate">{ev.title}</p>
+                                                    <p className="text-xs text-slate-400">{new Date(ev.date + 'T12:00:00').toLocaleDateString('pt-BR')}</p>
+                                                </div>
+                                                <button onClick={() => triggerDelete(ev.id)} className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-2"><IconTrash2 size={16} /></button>
+                                            </div>
+                                        ))}
+                                        {events.length === 0 && <p className="text-sm text-slate-500">Nenhum evento cadastrado.</p>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex-1 p-6 md:p-12 overflow-y-auto">
+                                <div className="max-w-2xl mx-auto">
+                                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                                        <div className="flex items-center gap-3 mb-8">
+                                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center"><IconPlus size={20} /></div>
+                                            <h2 className="text-2xl font-bold">Adicionar Novo Evento</h2>
+                                        </div>
+                                        <form onSubmit={handleSaveEvent} className="space-y-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Título do Evento</label>
+                                                <input required type="text" value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-slate-700 mb-1">Data</label>
+                                                    <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-slate-700 mb-1">Hora</label>
+                                                    <input required type="time" value={newEvent.time} onChange={e => setNewEvent({...newEvent, time: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Local</label>
+                                                <input required type="text" placeholder="Ex: Sede Principal" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label>
+                                                <textarea required rows="3" value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Banner Vertical (Upload Automático)</label>
+                                                <div className="flex items-center gap-4">
+                                                    <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-xl font-medium transition flex items-center gap-2">
+                                                        <IconUpload size={18} />
+                                                        {isUploading ? 'Enviando...' : 'Escolher Imagem'}
+                                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploading} />
+                                                    </label>
+                                                    {newEvent.imageUrl && (
+                                                        <div className="h-16 w-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+                                                            <img src={newEvent.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {newEvent.imageUrl && <p className="text-xs text-green-600 mt-2 font-medium">✓ Imagem hospedada com sucesso.</p>}
+                                            </div>
+                                            <hr className="border-slate-100" />
+                                            <button type="submit" disabled={!newEvent.imageUrl || isUploading} className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                                Publicar Evento
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
